@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "LuxorLMS.Registration.Domain/1.0.0": {
+        "dependencies": {
+          "LuxorLMS.Kernel": "1.0.0"
+        },
+        "runtime": {
+          "LuxorLMS.Registration.Domain.dll": {}
+        }
+      },
+      "LuxorLMS.Kernel/1.0.0": {
+        "runtime": {
+          "LuxorLMS.Kernel.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "LuxorLMS.Registration.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "LuxorLMS.Kernel/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

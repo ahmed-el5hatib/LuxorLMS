@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: luxorlms
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  identity-api:
+    build:
+      context: .
+      dockerfile: src/LuxorLMS.Identity.Api/Dockerfile
+    ports:
+      - "5001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=luxorlms;Username=postgres;Password=postgres
+      - Jwt__SecretKey=ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - Jwt__Issuer=LuxorLMS
+      - Jwt__Audience=LuxorLMSUsers
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: on-failure
+
+  academic-api:
+    build:
+      context: .
+      dockerfile: src/LuxorLMS.Academic.Api/Dockerfile
+    ports:
+      - "5002:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=luxorlms;Username=postgres;Password=postgres
+      - Jwt__SecretKey=ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - Jwt__Issuer=LuxorLMS
+      - Jwt__Audience=LuxorLMSUsers
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: on-failure
+
+  registration-api:
+    build:
+      context: .
+      dockerfile: src/LuxorLMS.Registration.Api/Dockerfile
+    ports:
+      - "5003:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=luxorlms;Username=postgres;Password=postgres
+      - Jwt__SecretKey=ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - Jwt__Issuer=LuxorLMS
+      - Jwt__Audience=LuxorLMSUsers
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: on-failure
+
+  forums-api:
+    build:
+      context: .
+      dockerfile: src/LuxorLMS.Forums.Api/Dockerfile
+    ports:
+      - "5004:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=luxorlms;Username=postgres;Password=postgres
+      - Jwt__SecretKey=ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - Jwt__Issuer=LuxorLMS
+      - Jwt__Audience=LuxorLMSUsers
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: on-failure
+
+  notifications-api:
+    build:
+      context: .
+      dockerfile: src/LuxorLMS.Notifications.Api/Dockerfile
+    ports:
+      - "5005:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=luxorlms;Username=postgres;Password=postgres
+      - Jwt__SecretKey=ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - Jwt__Issuer=LuxorLMS
+      - Jwt__Audience=LuxorLMSUsers
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: on-failure
+
+  frontend:
+    image: nginx:alpine
+    ports:
+      - "3000:80"
+    volumes:
+      - ./src/LuxorLMS.Frontend:/usr/share/nginx/html:ro
+    restart: on-failure
+
+volumes:
+  postgres_data:

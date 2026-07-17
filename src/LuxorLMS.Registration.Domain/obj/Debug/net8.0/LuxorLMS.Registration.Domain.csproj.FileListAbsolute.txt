@@ -1,0 +1,16 @@
+D:\LuxorLMS\src\LuxorLMS.Registration.Domain\bin\Debug\net8.0\LuxorLMS.Registration.Domain.deps.json
+D:\LuxorLMS\src\LuxorLMS.Registration.Domain\bin\Debug\net8.0\LuxorLMS.Registration.Domain.dll
+D:\LuxorLMS\src\LuxorLMS.Registration.Domain\bin\Debug\net8.0\LuxorLMS.Registration.Domain.pdb
+D:\LuxorLMS\src\LuxorLMS.Registration.Domain\bin\Debug\net8.0\LuxorLMS.Kernel.dll
+D:\LuxorLMS\src\LuxorLMS.Registration.Domain\bin\Debug\net8.0\LuxorLMS.Kernel.pdb
+D:\LuxorLMS\src\LuxorLMS.Registration.Domain\obj\Debug\net8.0\LuxorLMS.Registration.Domain.csproj.AssemblyReference.cache
+D:\LuxorLMS\src\LuxorLMS.Registration.Domain\obj\Debug\net8.0\LuxorLMS.Registration.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\LuxorLMS\src\LuxorLMS.Registration.Domain\obj\Debug\net8.0\LuxorLMS.Registration.Domain.AssemblyInfoInputs.cache
+D:\LuxorLMS\src\LuxorLMS.Registration.Domain\obj\Debug\net8.0\LuxorLMS.Registration.Domain.AssemblyInfo.cs
+D:\LuxorLMS\src\LuxorLMS.Registration.Domain\obj\Debug\net8.0\LuxorLMS.Registration.Domain.csproj.CoreCompileInputs.cache
+D:\LuxorLMS\src\LuxorLMS.Registration.Domain\obj\Debug\net8.0\LuxorLMS.Registration.Domain.sourcelink.json
+D:\LuxorLMS\src\LuxorLMS.Registration.Domain\obj\Debug\net8.0\LuxorLMS.1F65F522.Up2Date
+D:\LuxorLMS\src\LuxorLMS.Registration.Domain\obj\Debug\net8.0\LuxorLMS.Registration.Domain.dll
+D:\LuxorLMS\src\LuxorLMS.Registration.Domain\obj\Debug\net8.0\refint\LuxorLMS.Registration.Domain.dll
+D:\LuxorLMS\src\LuxorLMS.Registration.Domain\obj\Debug\net8.0\LuxorLMS.Registration.Domain.pdb
+D:\LuxorLMS\src\LuxorLMS.Registration.Domain\obj\Debug\net8.0\ref\LuxorLMS.Registration.Domain.dll

@@ -1,0 +1,12 @@
+D:\LuxorLMS\src\LuxorLMS.Kernel\bin\Debug\net8.0\LuxorLMS.Kernel.deps.json
+D:\LuxorLMS\src\LuxorLMS.Kernel\bin\Debug\net8.0\LuxorLMS.Kernel.dll
+D:\LuxorLMS\src\LuxorLMS.Kernel\bin\Debug\net8.0\LuxorLMS.Kernel.pdb
+D:\LuxorLMS\src\LuxorLMS.Kernel\obj\Debug\net8.0\LuxorLMS.Kernel.GeneratedMSBuildEditorConfig.editorconfig
+D:\LuxorLMS\src\LuxorLMS.Kernel\obj\Debug\net8.0\LuxorLMS.Kernel.AssemblyInfoInputs.cache
+D:\LuxorLMS\src\LuxorLMS.Kernel\obj\Debug\net8.0\LuxorLMS.Kernel.AssemblyInfo.cs
+D:\LuxorLMS\src\LuxorLMS.Kernel\obj\Debug\net8.0\LuxorLMS.Kernel.csproj.CoreCompileInputs.cache
+D:\LuxorLMS\src\LuxorLMS.Kernel\obj\Debug\net8.0\LuxorLMS.Kernel.sourcelink.json
+D:\LuxorLMS\src\LuxorLMS.Kernel\obj\Debug\net8.0\LuxorLMS.Kernel.dll
+D:\LuxorLMS\src\LuxorLMS.Kernel\obj\Debug\net8.0\refint\LuxorLMS.Kernel.dll
+D:\LuxorLMS\src\LuxorLMS.Kernel\obj\Debug\net8.0\LuxorLMS.Kernel.pdb
+D:\LuxorLMS\src\LuxorLMS.Kernel\obj\Debug\net8.0\ref\LuxorLMS.Kernel.dll

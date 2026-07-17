@@ -1,0 +1,127 @@
+## 1. Project Analysis: LuxorLMS
+
+**Project Type:** Enterprise-grade, modular monolith Learning Management System (LMS) for Luxor University, designed to scale to 10k+ concurrent users with a community-driven development model.
+
+**Core Architecture:**
+- **Stack:** .NET 8/9 (ASP.NET Core Minimal APIs), PostgreSQL + EF Core, Redis (cache + RedLock distributed locking), Hangfire (background jobs), cloud-agnostic S3/Azure/MinIO storage.
+- **Pattern:** Modular Monolith with Clean Architecture boundaries. 13 isolated modules communicate via MediatR (in-memory events) or public interfaces.
+- **Frontend:** HTML5/CSS3/ES6+ with Glassmorphism UI (Cairo for Arabic, Inter for English), dark mode support.
+
+**13 Domain Modules:**
+1. Identity (MFA, RBAC, device sessions)
+2. Academic (faculty → department → program → study plan hierarchy)
+3. Registration (prerequisite checks, credit hour limits, add/drop/withdraw)
+4. Course Management (lecture/lab/tutorial sections)
+5. Assignments (rubrics, file versioning, plagiarism checks)
+6. Quizzes (visual builder, timed exams)
+7. Attendance (QR + geolocation, manual, late/excused)
+8. Forums (threaded discussions)
+9. Notifications (in-app, email, SMS, push)
+10. Analytics (real-time KPIs, GPA trends)
+11. Storage (signed URLs, versioning, provider abstraction)
+12. Reporting (PDF, Excel, CSV exports)
+13. Administration (global settings, audit logs, Hangfire dashboard)
+
+**Key Non-Functional Requirements:**
+- RedLock for critical concurrency (registration, quiz submission)
+- EF Core 2nd-level cache via Redis
+- Rate limiting (token bucket), offset + cursor pagination
+- Gzip/Brotli compression, CDN for static assets
+- Immutable audit logging
+- OWASP protection (BOLA/IDOR, SQLi, XSS, CSRF)
+- AI readiness roadmap (teaching assistant bot, predictive analytics, smart recommendations)
+
+---
+
+## 2. GitHub Repository Setup
+
+**Repository created:** https://github.com/ahmed-el5hatib/LuxorLMS
+- Type: Public
+- Initial commit: `LuxorLMS_Specification_README.md`
+- Remote: `origin` → `https://github.com/ahmed-el5hatib/LuxorLMS.git`
+
+**Recommended next steps for repo setup:**
+- Add `LICENSE` (MIT/Apache-2.0 recommended for open-source)
+- Add `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md`
+- Configure branch protection rules on `main`
+- Set up GitHub Actions CI/CD (build, test, lint)
+
+---
+
+## 3. Proposed Milestone Breakdown
+
+### **Milestone 0: Foundation & Infrastructure** (Weeks 1-2)
+- **M0.1** Solution scaffolding: Visual Studio solution with 13 module projects + shared Kernel, following Clean Architecture.
+- **M0.2** Database & EF Core: PostgreSQL connection, base `DbContext`, global query filters, connection pooling, migration infrastructure.
+- **M0.3** Caching & Locking: Redis setup, RedLock implementation, distributed cache abstraction.
+- **M0.4** Observability: Serilog/OpenTelemetry, health checks, Hangfire dashboard integration.
+- **M0.5** CI/CD: GitHub Actions pipeline (build, test, SonarCloud, Docker build).
+
+### **Milestone 1: Identity & Core Security** (Weeks 3-4)
+- **M1.1** Identity Module: Users, Roles, Permissions, Claims-based auth.
+- **M1.2** Authentication: JWT + Refresh Tokens, HttpOnly cookies, device session tracking.
+- **M1.3** MFA: TOTP (Google Authenticator) enrollment and validation.
+- **M1.4** Security: Password policies, account lockout, rate limiting middleware.
+- **M1.5** Audit Logging: Immutable `AuditLogs` table, action interception pipeline.
+
+### **Milestone 2: Academic Lifecycle & Hierarchy** (Weeks 5-6)
+- **M2.1** Academic Module: Faculties, Departments, Programs, StudyPlans.
+- **M2.2** Curriculum: Courses, CoursePrerequisites, StudyPlan-Course mappings.
+- **M2.3** Temporal: AcademicYears, Semesters with start/end date validation.
+- **M2.4** RBAC Enforcement: Policy-based authorization for all 8 roles.
+
+### **Milestone 3: Registration & Course Management** (Weeks 7-9)
+- **M3.1** Registration Module: Registration windows, prerequisite engine, credit hour validation (GPA-based).
+- **M3.2** Add/Drop/Withdraw workflows with 'W' grade recording.
+- **M3.3** Course Offerings & Sections: Lecture/Lab/Tutorial partitioning, capacity management, staff assignment.
+- **M3.4** Concurrency: RedLock seat booking during registration.
+- **M3.5** Enrollment Approval: Academic Affairs override dashboard.
+
+### **Milestone 4: Grading & Transcripts** (Weeks 10-11)
+- **M4.1** Grade Management: GradeCategories, GradeComponents, weighted schemas.
+- **M4.2** GPA Engine: Semester GPA and CGPA calculation, standard 4.0 scaling.
+- **M4.3** Grade Publishing: Draft → Department Head approval → Academic Affairs publish workflow.
+- **M4.4** Appeals: 7-day student appeal window after publishing.
+
+### **Milestone 5: Attendance & Quizzes** (Weeks 12-13)
+- **M5.1** Attendance: QR token generation, geolocation verification, status types (Present/Late/Absent/Excused).
+- **M5.2** Attendance alerts: >25% absence threshold flagging.
+- **M5.3** Quizzes Module: Question bank, visual quiz builder, timed exam execution.
+- **M5.4** Assignments Module: Rubrics, submission pipeline, file versioning, plagiarism check integration.
+
+### **Milestone 6: Communication & Notifications** (Weeks 14-15)
+- **M6.1** Forums: Threaded discussions, moderation, markdown support.
+- **M6.2** Notification Service: Template engine, in-app + email + SMS + push dispatcher.
+- **M6.3** Scheduler: Hangfire jobs for reminders, grade publishing, cleanup.
+- **M6.4** Fallback rules: Push → Email fallback, batching.
+
+### **Milestone 7: Storage, Search & Reporting** (Weeks 16-17)
+- **M7.1** Storage Module: S3/Azure/MinIO provider abstraction, signed URLs, versioning.
+- **M7.2** Search: PostgreSQL Full Text Search with GIN indexes, optional Elasticsearch sync.
+- **M7.3** Reporting Engine: PDF transcripts (watermarked), Excel rosters, CSV exports via background jobs.
+
+### **Milestone 8: Administration & Analytics** (Weeks 18-19)
+- **M8.1** Administration Module: Global settings, faculty creation, background job UI.
+- **M8.2** Analytics Module: Real-time KPIs, grade distributions, GPA trends, server health.
+- **M8.3** Mobile App: QR attendance scanner (React Native / Flutter).
+
+### **Milestone 9: Frontend & UX** (Weeks 20-22)
+- **M9.1** Glassmorphism Theme: CSS variables, Cairo/Inter typography, dark mode, back-to-top, support chat drawer.
+- **M9.2** Dashboards: Role-specific dashboards (Student, Teacher, TA, Admin, Academic Affairs).
+- **M9.3** Responsive Layout: Mobile-first, RTL Arabic support, CDN integration.
+
+### **Milestone 10: AI Readiness & Launch** (Weeks 23-24)
+- **M10.1** AI Teaching Assistant: RAG pipeline on course documents (PDFs/videos).
+- **M10.2** Predictive Analytics: Early-warning ML model for at-risk students.
+- **M10.3** Performance Testing: Load testing to 10k concurrent users, optimization.
+- **M10.4** Documentation & Community: CONTRIBUTING.md, architecture docs, community launch.
+
+---
+
+**Community-Driven Model Considerations:**
+- Label issues with `good first issue`, `help wanted`, `module:identity`, `module:registration`, etc.
+- Use GitHub Projects to track module-level progress.
+- Establish a `CONTRIBUTING.md` with module ownership guidelines (each module has a maintainer).
+- Consider GitHub Discussions for RFCs on new features.
+
+Would you like me to initialize the solution structure and begin implementing **Milestone 0** (Foundation & Infrastructure)?

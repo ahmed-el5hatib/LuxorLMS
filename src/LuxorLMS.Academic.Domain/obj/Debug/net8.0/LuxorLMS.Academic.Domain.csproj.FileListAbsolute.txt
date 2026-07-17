@@ -1,0 +1,16 @@
+D:\LuxorLMS\src\LuxorLMS.Academic.Domain\bin\Debug\net8.0\LuxorLMS.Academic.Domain.deps.json
+D:\LuxorLMS\src\LuxorLMS.Academic.Domain\bin\Debug\net8.0\LuxorLMS.Academic.Domain.dll
+D:\LuxorLMS\src\LuxorLMS.Academic.Domain\bin\Debug\net8.0\LuxorLMS.Academic.Domain.pdb
+D:\LuxorLMS\src\LuxorLMS.Academic.Domain\bin\Debug\net8.0\LuxorLMS.Kernel.dll
+D:\LuxorLMS\src\LuxorLMS.Academic.Domain\bin\Debug\net8.0\LuxorLMS.Kernel.pdb
+D:\LuxorLMS\src\LuxorLMS.Academic.Domain\obj\Debug\net8.0\LuxorLMS.Academic.Domain.csproj.AssemblyReference.cache
+D:\LuxorLMS\src\LuxorLMS.Academic.Domain\obj\Debug\net8.0\LuxorLMS.Academic.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\LuxorLMS\src\LuxorLMS.Academic.Domain\obj\Debug\net8.0\LuxorLMS.Academic.Domain.AssemblyInfoInputs.cache
+D:\LuxorLMS\src\LuxorLMS.Academic.Domain\obj\Debug\net8.0\LuxorLMS.Academic.Domain.AssemblyInfo.cs
+D:\LuxorLMS\src\LuxorLMS.Academic.Domain\obj\Debug\net8.0\LuxorLMS.Academic.Domain.csproj.CoreCompileInputs.cache
+D:\LuxorLMS\src\LuxorLMS.Academic.Domain\obj\Debug\net8.0\LuxorLMS.Academic.Domain.sourcelink.json
+D:\LuxorLMS\src\LuxorLMS.Academic.Domain\obj\Debug\net8.0\LuxorLMS.96785379.Up2Date
+D:\LuxorLMS\src\LuxorLMS.Academic.Domain\obj\Debug\net8.0\LuxorLMS.Academic.Domain.dll
+D:\LuxorLMS\src\LuxorLMS.Academic.Domain\obj\Debug\net8.0\refint\LuxorLMS.Academic.Domain.dll
+D:\LuxorLMS\src\LuxorLMS.Academic.Domain\obj\Debug\net8.0\LuxorLMS.Academic.Domain.pdb
+D:\LuxorLMS\src\LuxorLMS.Academic.Domain\obj\Debug\net8.0\ref\LuxorLMS.Academic.Domain.dll

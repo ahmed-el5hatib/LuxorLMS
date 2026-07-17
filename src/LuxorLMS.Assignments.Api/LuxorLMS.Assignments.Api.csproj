@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LuxorLMS.Assignments.Infrastructure\LuxorLMS.Assignments.Infrastructure.csproj" />
+    <ProjectReference Include="..\LuxorLMS.Assignments.Application\LuxorLMS.Assignments.Application.csproj" />
+    <ProjectReference Include="..\LuxorLMS.Assignments.Domain\LuxorLMS.Assignments.Domain.csproj" />
+    <ProjectReference Include="..\LuxorLMS.Academic.Application\LuxorLMS.Academic.Application.csproj" />
+    <ProjectReference Include="..\LuxorLMS.Academic.Infrastructure\LuxorLMS.Academic.Infrastructure.csproj" />
+    <ProjectReference Include="..\LuxorLMS.Identity.Application\LuxorLMS.Identity.Application.csproj" />
+    <ProjectReference Include="..\LuxorLMS.Kernel\LuxorLMS.Kernel.csproj" />
+  </ItemGroup>
+
+</Project>
