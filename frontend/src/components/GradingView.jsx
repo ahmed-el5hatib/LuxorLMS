@@ -1,11 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Award, FileText, Download, AlertTriangle, CheckCircle2, ShieldCheck, X } from 'lucide-react';
+import { apiRequest } from '../services/apiClient';
 
-export default function GradingView({ grades, user }) {
+export default function GradingView({ grades, setGrades, user }) {
   const [showTranscriptModal, setShowTranscriptModal] = useState(false);
   const [appealCourse, setAppealCourse] = useState(null);
   const [appealReason, setAppealReason] = useState('');
   const [submittedAppeal, setSubmittedAppeal] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadGrades() {
+      setLoading(true);
+      const res = await apiRequest('/grading/my-grades');
+      if (!cancelled && res.success) {
+        setGrades(res.data || []);
+      }
+      if (!cancelled) setLoading(false);
+    }
+    loadGrades();
+    return () => { cancelled = true; };
+  }, [setGrades]);
 
   const handleAppealSubmit = (e) => {
     e.preventDefault();
@@ -16,6 +32,14 @@ export default function GradingView({ grades, user }) {
       setAppealReason('');
     }, 2000);
   };
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '40vh' }}>
+        <div className="glass-panel" style={{ padding: 24 }}>Loading grades...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -43,7 +67,7 @@ export default function GradingView({ grades, user }) {
         
         <div className="glass-panel" style={{ padding: 24, background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(15, 23, 42, 0.8))' }}>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Cumulative GPA (CGPA)</p>
-          <h1 style={{ fontSize: '2.8rem', fontWeight: 800, margin: '8px 0' }} className="gold-gradient-text">{user.gpa} / 4.00</h1>
+          <h1 style={{ fontSize: '2.8rem', fontWeight: 800, margin: '8px 0' }} className="gold-gradient-text">{user?.gpa || '0.00'} / 4.00</h1>
           <p style={{ fontSize: '0.82rem', color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', gap: 4 }}>
             <ShieldCheck size={16} /> Verified by University Registrar
           </p>
@@ -51,7 +75,7 @@ export default function GradingView({ grades, user }) {
 
         <div className="glass-panel" style={{ padding: 24 }}>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Total Earned Credits</p>
-          <h1 style={{ fontSize: '2.8rem', fontWeight: 800, margin: '8px 0' }}>{user.completedCredits} <span style={{ fontSize: '1.2rem', color: 'var(--text-muted)' }}>Cr</span></h1>
+          <h1 style={{ fontSize: '2.8rem', fontWeight: 800, margin: '8px 0' }}>{user?.completedCredits || 0} <span style={{ fontSize: '1.2rem', color: 'var(--text-muted)' }}>Cr</span></h1>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Required for Graduation: 136 Cr</p>
         </div>
 
@@ -139,7 +163,7 @@ export default function GradingView({ grades, user }) {
               <div>
                 <span className="badge badge-emerald">OFFICIAL TRANSCRIPT</span>
                 <h2 style={{ fontSize: '1.6rem', marginTop: 4 }}>LUXOR UNIVERSITY REGISTRAR</h2>
-                <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Student: {user.fullName} ({user.username})</p>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Student: {user?.username} ({user?.email})</p>
               </div>
               <X size={24} style={{ cursor: 'pointer' }} onClick={() => setShowTranscriptModal(false)} />
             </div>
@@ -147,8 +171,8 @@ export default function GradingView({ grades, user }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 24 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', background: 'rgba(15, 23, 42, 0.6)', padding: 14, borderRadius: 10 }}>
                 <span>Major: Computer Science</span>
-                <span>CGPA: <strong>{user.gpa} / 4.00</strong></span>
-                <span>Total Credits: <strong>{user.completedCredits} Cr</strong></span>
+                <span>CGPA: <strong>{user?.gpa || '0.00'} / 4.00</strong></span>
+                <span>Total Credits: <strong>{user?.completedCredits || 0} Cr</strong></span>
               </div>
 
               <h4 style={{ fontSize: '1rem', marginTop: 10 }}>Academic History Records</h4>

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FolderLock, UploadCloud, Link, History, Shield, FileText, Download, Trash2, X, CheckCircle2 } from 'lucide-react';
+import { apiRequest } from '../services/apiClient';
 
 export default function StorageView({ files, setFiles, user }) {
   const [selectedFileForUrl, setSelectedFileForUrl] = useState(null);
@@ -9,42 +10,61 @@ export default function StorageView({ files, setFiles, user }) {
   const [uploadFileName, setUploadFileName] = useState('');
   const [uploadProvider, setUploadProvider] = useState('S3');
   const [isUploading, setIsUploading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const handleSimulatedUpload = (e) => {
+  useEffect(() => {
+    let cancelled = false;
+    async function loadFiles() {
+      setLoading(true);
+      const res = await apiRequest('/storage/files');
+      if (!cancelled && res.success) {
+        setFiles(res.data || []);
+      }
+      if (!cancelled) setLoading(false);
+    }
+    loadFiles();
+    return () => { cancelled = true; };
+  }, [setFiles]);
+
+  const handleUpload = async (e) => {
     e.preventDefault();
     if (!uploadFileName) return;
 
     setIsUploading(true);
-    setTimeout(() => {
-      const newFile = {
-        id: `f-${Date.now()}`,
-        fileName: uploadFileName,
-        contentType: uploadFileName.endsWith('.pdf') ? 'application/pdf' : 'application/octet-stream',
-        sizeBytes: Math.floor(Math.random() * 5000000) + 1000000,
-        version: 1,
-        provider: uploadProvider,
-        container: 'luxorlms-submissions',
-        createdAt: new Date().toISOString(),
-        versions: [
-          { version: 1, objectKey: `${uploadFileName}_v1`, createdAt: new Date().toISOString(), sizeBytes: 2000000 }
-        ]
-      };
+    const res = await apiRequest('/storage/files', {
+      method: 'POST',
+      body: JSON.stringify({ fileName: uploadFileName, provider: uploadProvider }),
+    });
 
-      setFiles([newFile, ...files]);
+    if (res.success) {
+      setFiles([res.data, ...files]);
       setUploadFileName('');
-      setIsUploading(false);
-    }, 1200);
+    }
+    setIsUploading(false);
   };
 
-  const generateSignedUrl = (file) => {
+  const generateSignedUrl = async (file) => {
     setSelectedFileForUrl(file);
-    const mockExpiringUrl = `https://storage.luxorlms.edu/api/v1/storage/files/${file.id}/url?exp=${Math.floor(Date.now()/1000) + 900}&token=eyJhbGciOiJIUzI1Ni...`;
-    setGeneratedSignedUrl(mockExpiringUrl);
+    const res = await apiRequest(`/storage/files/${file.id}/url`);
+    if (res.success) {
+      setGeneratedSignedUrl(res.data?.url || '');
+    }
   };
 
-  const deleteFile = (id) => {
-    setFiles(files.filter(f => f.id !== id));
+  const deleteFile = async (id) => {
+    const res = await apiRequest(`/storage/files/${id}`, { method: 'DELETE' });
+    if (res.success) {
+      setFiles(files.filter(f => f.id !== id));
+    }
   };
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '40vh' }}>
+        <div className="glass-panel" style={{ padding: 24 }}>Loading storage...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -72,7 +92,7 @@ export default function StorageView({ files, setFiles, user }) {
       {/* Upload Box */}
       <div className="glass-panel" style={{ padding: 24 }}>
         <h3 style={{ fontSize: '1.15rem', marginBottom: 14 }}>Upload New Storage Artifact</h3>
-        <form onSubmit={handleSimulatedUpload} style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>
+        <form onSubmit={handleUpload} style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>
           <input 
             type="text" 
             required
@@ -194,7 +214,7 @@ export default function StorageView({ files, setFiles, user }) {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
-              {selectedFileForVersions.versions.map(v => (
+              {selectedFileForVersions.versions?.map(v => (
                 <div key={v.version} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 12, background: 'rgba(15, 23, 42, 0.6)', borderRadius: 10, border: '1px solid var(--border-glass)' }}>
                   <div>
                     <span className="badge badge-emerald">Version v{v.version}</span>

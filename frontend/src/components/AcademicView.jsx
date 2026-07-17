@@ -1,31 +1,66 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BookOpen, UserCheck, Plus, Check, Search, Filter, ShieldCheck, Info } from 'lucide-react';
+import { apiRequest } from '../services/apiClient';
 
 export default function AcademicView({ courses, setCourses, user }) {
   const [search, setSearch] = useState('');
   const [deptFilter, setDeptFilter] = useState('All');
+  const [loading, setLoading] = useState(true);
 
-  const toggleEnrollment = (id) => {
-    setCourses(courses.map(c => {
-      if (c.id === id) {
-        const isEnrolled = !c.isEnrolled;
-        return {
-          ...c,
-          isEnrolled,
-          enrolledCount: isEnrolled ? c.enrolledCount + 1 : c.enrolledCount - 1
-        };
+  useEffect(() => {
+    let cancelled = false;
+    async function loadCourses() {
+      setLoading(true);
+      const res = await apiRequest('/academic/courses');
+      if (!cancelled && res.success) {
+        setCourses(res.data || []);
       }
-      return c;
-    }));
+      if (!cancelled) setLoading(false);
+    }
+    loadCourses();
+    return () => { cancelled = true; };
+  }, [setCourses]);
+
+  const toggleEnrollment = async (id) => {
+    const course = courses.find(c => c.id === id);
+    if (!course) return;
+
+    const action = course.isEnrolled ? 'drop' : 'enroll';
+    const res = await apiRequest(`/registration/enrollments/${id}`, {
+      method: action === 'enroll' ? 'POST' : 'DELETE',
+    });
+
+    if (res.success) {
+      setCourses(courses.map(c => {
+        if (c.id === id) {
+          const isEnrolled = !c.isEnrolled;
+          return {
+            ...c,
+            isEnrolled,
+            enrolledCount: isEnrolled ? c.enrolledCount + 1 : Math.max(0, c.enrolledCount - 1)
+          };
+        }
+        return c;
+      }));
+    }
   };
 
-  const departments = ['All', 'Computer Science', 'Artificial Intelligence', 'Information Systems', 'Software Engineering'];
+  const departments = ['All', ...new Set(courses.map(c => c.department).filter(Boolean))];
 
   const filteredCourses = courses.filter(c => {
-    const matchesSearch = c.nameEn.toLowerCase().includes(search.toLowerCase()) || c.courseCode.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = (c.nameEn || '').toLowerCase().includes(search.toLowerCase()) || 
+                         (c.courseCode || '').toLowerCase().includes(search.toLowerCase());
     const matchesDept = deptFilter === 'All' || c.department === deptFilter;
     return matchesSearch && matchesDept;
   });
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '40vh' }}>
+        <div className="glass-panel" style={{ padding: 24 }}>Loading courses...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>

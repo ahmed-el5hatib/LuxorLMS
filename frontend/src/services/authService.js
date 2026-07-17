@@ -39,20 +39,7 @@ export const authService = {
       return { success: true, user, accessToken };
     }
 
-    // Fallback simulated login if backend is offline
-    const fallbackUser = {
-      userId: `u-simulated-${Date.now()}`,
-      username: usernameOrEmail,
-      email: `${usernameOrEmail}@luxor.edu.eg`,
-      role: usernameOrEmail.toLowerCase().includes('doc') ? 'Doctor' : usernameOrEmail.toLowerCase().includes('ta') ? 'TA' : usernameOrEmail.toLowerCase().includes('admin') ? 'Admin' : 'Student',
-    };
-    const mockToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI${Date.now()}...`;
-
-    localStorage.setItem('luxorlms_access_token', mockToken);
-    localStorage.setItem('luxorlms_user', JSON.stringify(fallbackUser));
-    window.dispatchEvent(new Event('luxorlms_auth_changed'));
-
-    return { success: true, user: fallbackUser, accessToken: mockToken, isSimulated: true };
+    return { success: false, error: response.error, description: response.description };
   },
 
   async logout() {
@@ -73,8 +60,8 @@ export const authService = {
   async fetchPermissions() {
     const response = await apiRequest('/auth/me');
     if (response.success && response.data) {
-      return response.data.permissions;
+      return response.data.permissions || [];
     }
-    return ['Storage.Read', 'Storage.Write', 'Notifications.View', 'Forums.Read', 'Forums.Write'];
+    return [];
   }
 };

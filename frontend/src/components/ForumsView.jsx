@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MessagesSquare, Pin, Lock, Shield, User, Send, Flag, Trash2, Plus, CornerDownRight, CheckCircle2 } from 'lucide-react';
+import { apiRequest } from '../services/apiClient';
 
 export default function ForumsView({ forums, setForums, user }) {
   const [selectedCourseFilter, setSelectedCourseFilter] = useState('All');
@@ -10,104 +11,122 @@ export default function ForumsView({ forums, setForums, user }) {
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const [replyText, setReplyText] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const createTopic = (e) => {
+  useEffect(() => {
+    let cancelled = false;
+    async function loadForums() {
+      setLoading(true);
+      const res = await apiRequest('/forum-topics');
+      if (!cancelled && res.success) {
+        setForums(res.data?.items || []);
+      }
+      if (!cancelled) setLoading(false);
+    }
+    loadForums();
+    return () => { cancelled = true; };
+  }, [setForums]);
+
+  const createTopic = async (e) => {
     e.preventDefault();
     if (!newTopicTitle || !newTopicContent) return;
 
-    const topic = {
-      id: `topic-${Date.now()}`,
-      courseOfferingId: 'offering-101',
-      courseCode: newTopicCourse,
-      title: newTopicTitle,
-      authorName: user.fullName,
-      isDoctor: user.role === 'Doctor',
-      isPinned: false,
-      isLocked: false,
-      createdAt: new Date().toISOString(),
-      repliesCount: 1,
-      posts: [
-        {
-          id: `post-${Date.now()}`,
-          authorName: user.fullName,
-          isDoctor: user.role === 'Doctor',
-          body: newTopicContent,
-          createdAt: new Date().toISOString(),
-          moderationStatus: 'None'
-        }
-      ]
-    };
+    const res = await apiRequest('/forum-topics', {
+      method: 'POST',
+      body: JSON.stringify({ 
+        title: newTopicTitle, 
+        initialPostContent: newTopicContent,
+        courseOfferingId: newTopicCourse
+      }),
+    });
 
-    setForums([topic, ...forums]);
-    setNewTopicTitle('');
-    setNewTopicContent('');
-    setShowCreateModal(false);
+    if (res.success) {
+      setForums([res.data, ...forums]);
+      setNewTopicTitle('');
+      setNewTopicContent('');
+      setShowCreateModal(false);
+    }
   };
 
-  const addReply = (topicId) => {
+  const addReply = async (topicId) => {
     if (!replyText) return;
 
-    const newPost = {
-      id: `post-${Date.now()}`,
-      authorName: user.fullName,
-      isDoctor: user.role === 'Doctor' || user.role === 'TA',
-      body: replyText,
-      createdAt: new Date().toISOString(),
-      moderationStatus: 'None'
-    };
+    const res = await apiRequest('/forum-posts', {
+      method: 'POST',
+      body: JSON.stringify({ topicId, body: replyText }),
+    });
 
-    setForums(forums.map(t => {
-      if (t.id === topicId) {
-        return {
-          ...t,
-          repliesCount: t.repliesCount + 1,
-          posts: [...t.posts, newPost]
-        };
+    if (res.success) {
+      setForums(forums.map(t => {
+        if (t.id === topicId) {
+          return {
+            ...t,
+            repliesCount: t.repliesCount + 1,
+            posts: [...t.posts, res.data]
+          };
+        }
+        return t;
+      }));
+
+      if (activeTopic && activeTopic.id === topicId) {
+        setActiveTopic({
+          ...activeTopic,
+          repliesCount: activeTopic.repliesCount + 1,
+          posts: [...activeTopic.posts, res.data]
+        });
       }
-      return t;
-    }));
 
-    if (activeTopic && activeTopic.id === topicId) {
-      setActiveTopic({
-        ...activeTopic,
-        repliesCount: activeTopic.repliesCount + 1,
-        posts: [...activeTopic.posts, newPost]
-      });
+      setReplyText('');
     }
-
-    setReplyText('');
   };
 
-  const togglePin = (topicId) => {
-    setForums(forums.map(t => t.id === topicId ? { ...t, isPinned: !t.isPinned } : t));
-    if (activeTopic?.id === topicId) setActiveTopic({ ...activeTopic, isPinned: !activeTopic.isPinned });
+  const togglePin = async (topicId) => {
+    const res = await apiRequest(`/forum-topics/${topicId}/pin`, { method: 'PUT' });
+    if (res.success) {
+      setForums(forums.map(t => t.id === topicId ? { ...t, isPinned: !t.isPinned } : t));
+      if (activeTopic?.id === topicId) setActiveTopic({ ...activeTopic, isPinned: !activeTopic.isPinned });
+    }
   };
 
-  const toggleLock = (topicId) => {
-    setForums(forums.map(t => t.id === topicId ? { ...t, isLocked: !t.isLocked } : t));
-    if (activeTopic?.id === topicId) setActiveTopic({ ...activeTopic, isLocked: !activeTopic.isLocked });
+  const toggleLock = async (topicId) => {
+    const res = await apiRequest(`/forum-topics/${topicId}/lock`, { method: 'PUT' });
+    if (res.success) {
+      setForums(forums.map(t => t.id === topicId ? { ...t, isLocked: !t.isLocked } : t));
+      if (activeTopic?.id === topicId) setActiveTopic({ ...activeTopic, isLocked: !activeTopic.isLocked });
+    }
   };
 
-  const moderatePost = (topicId, postId) => {
-    setForums(forums.map(t => {
-      if (t.id === topicId) {
-        return {
-          ...t,
-          posts: t.posts.map(p => p.id === postId ? { ...p, moderationStatus: 'Removed', body: '[This post has been removed by moderator]' } : p)
-        };
+  const moderatePost = async (topicId, postId) => {
+    const res = await apiRequest(`/forum-posts/${postId}/moderate?status=Removed`, { method: 'PUT' });
+    if (res.success) {
+      setForums(forums.map(t => {
+        if (t.id === topicId) {
+          return {
+            ...t,
+            posts: t.posts.map(p => p.id === postId ? { ...p, moderationStatus: 'Removed', body: '[This post has been removed by moderator]' } : p)
+          };
+        }
+        return t;
+      }));
+
+      if (activeTopic?.id === topicId) {
+        setActiveTopic({
+          ...activeTopic,
+          posts: activeTopic.posts.map(p => p.id === postId ? { ...p, moderationStatus: 'Removed', body: '[This post has been removed by moderator]' } : p)
+        });
       }
-      return t;
-    }));
-
-    if (activeTopic?.id === topicId) {
-      setActiveTopic({
-        ...activeTopic,
-        posts: activeTopic.posts.map(p => p.id === postId ? { ...p, moderationStatus: 'Removed', body: '[This post has been removed by moderator]' } : p)
-      });
     }
   };
 
   const filteredTopics = forums.filter(t => selectedCourseFilter === 'All' || t.courseCode === selectedCourseFilter);
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '40vh' }}>
+        <div className="glass-panel" style={{ padding: 24 }}>Loading forums...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -179,7 +198,7 @@ export default function ForumsView({ forums, setForums, user }) {
                       <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Replies</p>
                     </div>
 
-                    {(user.role === 'Doctor' || user.role === 'TA' || user.role === 'Admin') && (
+                    {(user?.role === 'Doctor' || user?.role === 'TA' || user?.role === 'Admin') && (
                       <div style={{ display: 'flex', gap: 6 }} onClick={e => e.stopPropagation()}>
                         <button className="btn-secondary" style={{ padding: 6 }} onClick={() => togglePin(topic.id)} title="Toggle Pin">
                           <Pin size={14} color={topic.isPinned ? 'var(--accent-amber)' : 'var(--text-muted)'} />
@@ -215,7 +234,7 @@ export default function ForumsView({ forums, setForums, user }) {
 
           {/* Posts List */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginBottom: 28 }}>
-            {activeTopic.posts.map((post, idx) => (
+            {activeTopic.posts?.map((post, idx) => (
               <div 
                 key={post.id} 
                 style={{ 
@@ -237,7 +256,7 @@ export default function ForumsView({ forums, setForums, user }) {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>{new Date(post.createdAt).toLocaleTimeString()}</span>
                     
-                    {(user.role === 'Doctor' || user.role === 'TA' || user.role === 'Admin') && post.moderationStatus !== 'Removed' && (
+                    {(user?.role === 'Doctor' || user?.role === 'TA' || user?.role === 'Admin') && post.moderationStatus !== 'Removed' && (
                       <button className="btn-danger" style={{ padding: '2px 8px', fontSize: '0.7rem' }} onClick={() => moderatePost(activeTopic.id, post.id)}>
                         <Flag size={12} /> Moderate
                       </button>

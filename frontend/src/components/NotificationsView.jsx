@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BellRing, Mail, Smartphone, Send, ShieldCheck, CheckCircle2, RefreshCw } from 'lucide-react';
+import { apiRequest } from '../services/apiClient';
 
 export default function NotificationsView({ notifications, setNotifications, user }) {
-  const [recipient, setRecipient] = useState(user.email);
+  const [recipient, setRecipient] = useState(user?.email || '');
   const [channel, setChannel] = useState('InApp');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [preferences, setPreferences] = useState({
     InApp: true,
@@ -15,31 +17,57 @@ export default function NotificationsView({ notifications, setNotifications, use
     Push: false
   });
 
+  useEffect(() => {
+    let cancelled = false;
+    async function loadNotifications() {
+      setLoading(true);
+      const res = await apiRequest('/notifications');
+      if (!cancelled && res.success) {
+        setNotifications(res.data || []);
+      }
+      if (!cancelled) setLoading(false);
+    }
+    loadNotifications();
+    return () => { cancelled = true; };
+  }, [setNotifications]);
+
   const togglePref = (ch) => {
     setPreferences({ ...preferences, [ch]: !preferences[ch] });
   };
 
-  const handleSendNotification = (e) => {
+  const handleSendNotification = async (e) => {
     e.preventDefault();
     if (!title || !body) return;
 
     setIsSending(true);
-    setTimeout(() => {
+    const res = await apiRequest('/notifications/dispatch', {
+      method: 'POST',
+      body: JSON.stringify({ recipient, channel, title, body }),
+    });
+
+    if (res.success) {
       const newNotif = {
-        id: `n-${Date.now()}`,
+        id: res.data?.id || `n-${Date.now()}`,
         title,
         body,
         channel,
         status: 'Sent',
         createdAt: 'Just now'
       };
-
       setNotifications([newNotif, ...notifications]);
       setTitle('');
       setBody('');
-      setIsSending(false);
-    }, 1000);
+    }
+    setIsSending(false);
   };
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '40vh' }}>
+        <div className="glass-panel" style={{ padding: 24 }}>Loading notifications...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -53,7 +81,7 @@ export default function NotificationsView({ notifications, setNotifications, use
           </div>
           <h2 style={{ fontSize: '1.8rem' }}>Multi-Channel Notifications & Preferences</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-            In-App, SMTP Email, Twilio SMS & Firebase Mobile Push with Push $\rightarrow$ Email fallback
+            In-App, SMTP Email, Twilio SMS & Firebase Mobile Push with Push → Email fallback
           </p>
         </div>
 

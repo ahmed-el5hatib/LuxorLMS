@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import DashboardView from './components/DashboardView';
@@ -9,48 +9,32 @@ import StorageView from './components/StorageView';
 import NotificationsView from './components/NotificationsView';
 import ForumsView from './components/ForumsView';
 import LoginModal from './components/LoginModal';
-
-import { 
-  INITIAL_USER, INITIAL_COURSES, INITIAL_GRADES, 
-  INITIAL_QUIZZES, INITIAL_FILES, INITIAL_NOTIFICATIONS, INITIAL_FORUMS 
-} from './services/apiMock';
 import { authService } from './services/authService';
 import { Bell, X } from 'lucide-react';
 
 export default function App() {
-  const [user, setUser] = useState(INITIAL_USER);
-  const [courses, setCourses] = useState(INITIAL_COURSES);
-  const [grades, setGrades] = useState(INITIAL_GRADES);
-  const [quizzes, setQuizzes] = useState(INITIAL_QUIZZES);
-  const [files, setFiles] = useState(INITIAL_FILES);
-  const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
-  const [forums, setForums] = useState(INITIAL_FORUMS);
+  const [user, setUser] = useState(null);
+  const [courses, setCourses] = useState([]);
+  const [grades, setGrades] = useState([]);
+  const [quizzes, setQuizzes] = useState([]);
+  const [files, setFiles] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [forums, setForums] = useState([]);
 
   const [activeView, setActiveView] = useState('dashboard');
   const [showNotifDrawer, setShowNotifDrawer] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const storedUser = authService.getStoredUser();
     if (storedUser) {
-      setUser(prev => ({
-        ...prev,
-        username: storedUser.username || prev.username,
-        email: storedUser.email || prev.email,
-        role: storedUser.role || prev.role,
-      }));
+      setUser(storedUser);
     }
 
     const handleAuthChanged = () => {
       const u = authService.getStoredUser();
-      if (u) {
-        setUser(prev => ({
-          ...prev,
-          username: u.username || prev.username,
-          email: u.email || prev.email,
-          role: u.role || prev.role,
-        }));
-      }
+      setUser(u);
     };
 
     window.addEventListener('luxorlms_auth_changed', handleAuthChanged);
@@ -58,16 +42,29 @@ export default function App() {
   }, []);
 
   const handleLoginSuccess = (authUser, token) => {
-    setUser(prev => ({
-      ...prev,
-      username: authUser.username || prev.username,
-      email: authUser.email || prev.email,
-      role: authUser.role || prev.role,
-      fullName: authUser.username ? authUser.username.replace('.', ' ').toUpperCase() : prev.fullName,
-    }));
+    setUser(authUser);
+    setIsLoginModalOpen(false);
+  };
+
+  const handleLogout = async () => {
+    await authService.logout();
+    setUser(null);
+    setActiveView('dashboard');
   };
 
   const renderActiveView = () => {
+    if (!user) {
+      return (
+        <div className="animate-fade-in" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+          <div className="glass-panel" style={{ padding: 40, textAlign: 'center', maxWidth: 480 }}>
+            <h2 style={{ fontSize: '1.6rem', marginBottom: 10 }}>Welcome to LuxorLMS</h2>
+            <p style={{ color: 'var(--text-muted)', marginBottom: 20 }}>Please sign in to access your dashboard, courses, and academic tools.</p>
+            <button className="btn-primary" onClick={() => setIsLoginModalOpen(true)}>Sign In</button>
+          </div>
+        </div>
+      );
+    }
+
     switch (activeView) {
       case 'dashboard':
         return <DashboardView user={user} courses={courses} quizzes={quizzes} setActiveView={setActiveView} />;
@@ -91,11 +88,9 @@ export default function App() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      
-      {/* Top Navbar */}
       <Navbar 
         user={user} 
-        setUser={setUser} 
+        onLogout={handleLogout}
         activeView={activeView} 
         setActiveView={setActiveView} 
         notifications={notifications}
@@ -105,25 +100,24 @@ export default function App() {
       />
 
       <div className="app-container">
-        
-        {/* Left Sidebar */}
         <Sidebar activeView={activeView} setActiveView={setActiveView} />
 
-        {/* Main Content Area */}
         <main className="main-content">
+          {isLoading && (
+            <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.4)', zIndex: 2000 }}>
+              <div className="glass-panel" style={{ padding: 24 }}>Loading...</div>
+            </div>
+          )}
           {renderActiveView()}
         </main>
-
       </div>
 
-      {/* Login / JWT Auth Modal */}
       <LoginModal 
         isOpen={isLoginModalOpen} 
         onClose={() => setIsLoginModalOpen(false)}
         onLoginSuccess={handleLoginSuccess}
       />
 
-      {/* Slide-over Notifications Drawer */}
       {showNotifDrawer && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 900 }} onClick={() => setShowNotifDrawer(false)}>
           <div 
@@ -157,7 +151,6 @@ export default function App() {
           </div>
         </div>
       )}
-
     </div>
   );
 }

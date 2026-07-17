@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ClockCheck, QrCode, CheckCircle2, Play, AlertCircle, Award, ArrowRight, ArrowLeft } from 'lucide-react';
+import { apiRequest } from '../services/apiClient';
 
 export default function QuizzesView({ quizzes, setQuizzes, user }) {
   const [activeQuiz, setActiveQuiz] = useState(null);
@@ -11,6 +12,21 @@ export default function QuizzesView({ quizzes, setQuizzes, user }) {
   const [showQrModal, setShowQrModal] = useState(false);
   const [qrCodeInput, setQrCodeInput] = useState('');
   const [attendanceSuccess, setAttendanceSuccess] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadQuizzes() {
+      setLoading(true);
+      const res = await apiRequest('/quizzes');
+      if (!cancelled && res.success) {
+        setQuizzes(res.data || []);
+      }
+      if (!cancelled) setLoading(false);
+    }
+    loadQuizzes();
+    return () => { cancelled = true; };
+  }, [setQuizzes]);
 
   const startQuiz = (q) => {
     setActiveQuiz(q);
@@ -25,13 +41,15 @@ export default function QuizzesView({ quizzes, setQuizzes, user }) {
 
   const finishQuiz = () => {
     let correctCount = 0;
-    activeQuiz.questions.forEach(q => {
-      if (selectedAnswers[q.id] === q.correctIndex) {
-        correctCount++;
-      }
-    });
+    if (activeQuiz?.questions) {
+      activeQuiz.questions.forEach(q => {
+        if (selectedAnswers[q.id] === q.correctIndex) {
+          correctCount++;
+        }
+      });
+    }
 
-    const scorePct = Math.round((correctCount / activeQuiz.questions.length) * 100);
+    const scorePct = activeQuiz?.questions?.length ? Math.round((correctCount / activeQuiz.questions.length) * 100) : 0;
     setCalculatedScore(scorePct);
     setQuizCompleted(true);
 
@@ -47,6 +65,14 @@ export default function QuizzesView({ quizzes, setQuizzes, user }) {
       setQrCodeInput('');
     }, 2000);
   };
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '40vh' }}>
+        <div className="glass-panel" style={{ padding: 24 }}>Loading quizzes...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -118,18 +144,18 @@ export default function QuizzesView({ quizzes, setQuizzes, user }) {
           {!quizCompleted ? (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: 12 }}>
-                <span>Question {currentQIndex + 1} of {activeQuiz.questions.length}</span>
+                <span>Question {currentQIndex + 1} of {activeQuiz.questions?.length || 0}</span>
                 <span>Select one best option</span>
               </div>
 
               {/* Question Text */}
               <h4 style={{ fontSize: '1.15rem', marginBottom: 20 }}>
-                {activeQuiz.questions[currentQIndex].questionText}
+                {activeQuiz.questions?.[currentQIndex]?.questionText}
               </h4>
 
               {/* Options */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 28 }}>
-                {activeQuiz.questions[currentQIndex].options.map((opt, idx) => {
+                {activeQuiz.questions?.[currentQIndex]?.options?.map((opt, idx) => {
                   const qId = activeQuiz.questions[currentQIndex].id;
                   const isSelected = selectedAnswers[qId] === idx;
                   return (
@@ -165,7 +191,7 @@ export default function QuizzesView({ quizzes, setQuizzes, user }) {
                   <ArrowLeft size={16} /> Previous
                 </button>
 
-                {currentQIndex < activeQuiz.questions.length - 1 ? (
+                {currentQIndex < (activeQuiz.questions?.length || 0) - 1 ? (
                   <button className="btn-primary" onClick={() => setCurrentQIndex(currentQIndex + 1)}>
                     Next Question <ArrowRight size={16} />
                   </button>

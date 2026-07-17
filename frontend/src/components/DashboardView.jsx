@@ -1,17 +1,71 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Award, BookOpen, Clock, AlertCircle, FileText, CheckCircle2, 
   TrendingUp, ArrowRight, Zap, FolderUp, MessagesSquare
 } from 'lucide-react';
+import { apiRequest } from '../services/apiClient';
 
-export default function DashboardView({ user, courses, quizzes, setActiveView }) {
+export default function DashboardView({ user, quizzes, setActiveView }) {
+  const [courses, setCourses] = useState([]);
+  const [stats, setStats] = useState({ gpa: 0, credits: 0, attendance: 0, pendingQuizzes: 0 });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadDashboard() {
+      setLoading(true);
+      try {
+        const [coursesRes, gradesRes, attendanceRes] = await Promise.all([
+          apiRequest('/academic/courses'),
+          apiRequest('/grading/my-grades'),
+          apiRequest('/attendance/my-attendance'),
+        ]);
+
+        if (!cancelled) {
+          const coursesData = coursesRes.success ? coursesRes.data : [];
+          const gradesData = gradesRes.success ? gradesRes.data : [];
+          const attendanceData = attendanceRes.success ? attendanceRes.data : {};
+
+          setCourses(coursesData);
+
+          const gpa = gradesData.length ? (gradesData.reduce((sum, g) => sum + (g.score || 0), 0) / gradesData.length / 20).toFixed(2) : '0.00';
+          const credits = coursesData.filter(c => c.isEnrolled).reduce((sum, c) => sum + (c.creditHours || 0), 0);
+          const pendingQuizzes = quizzes.filter(q => q.status === 'Pending').length;
+
+          setStats({
+            gpa: parseFloat(gpa),
+            credits,
+            attendance: attendanceData.rate || 0,
+            pendingQuizzes,
+          });
+        }
+      } catch (err) {
+        console.error('Failed to load dashboard', err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    loadDashboard();
+    return () => { cancelled = true; };
+  }, [quizzes]);
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '40vh' }}>
+        <div className="glass-panel" style={{ padding: 24 }}>Loading dashboard...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       
       {/* Welcome Banner */}
       <div className="glass-panel glass-panel-hover" style={{ 
         padding: 32, 
-        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.7)), url("https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=1200")',
+        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.7))',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         position: 'relative',
@@ -23,9 +77,9 @@ export default function DashboardView({ user, courses, quizzes, setActiveView })
               <span className="badge badge-emerald">Spring Semester 2026</span>
               <span className="badge badge-purple">Academic Honor Roll</span>
             </div>
-            <h1 style={{ fontSize: '2.2rem', marginBottom: 6 }}>Welcome back, {user.fullName}! 👋</h1>
+            <h1 style={{ fontSize: '2.2rem', marginBottom: 6 }}>Welcome back, {user?.username || 'User'}! 👋</h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.98rem', maxWidth: 620 }}>
-              You are currently enrolled in <strong>{courses.filter(c => c.isEnrolled).length} active courses</strong> with a cumulative GPA of <span style={{ color: 'var(--accent-amber)', fontWeight: 800 }}>{user.gpa}</span>.
+              You are currently enrolled in <strong>{courses.filter(c => c.isEnrolled).length} active courses</strong> with a cumulative GPA of <span style={{ color: 'var(--accent-amber)', fontWeight: 800 }}>{stats.gpa}</span>.
             </p>
           </div>
 
@@ -50,7 +104,7 @@ export default function DashboardView({ user, courses, quizzes, setActiveView })
               <Award size={20} />
             </div>
           </div>
-          <p style={{ fontSize: '2.1rem', fontWeight: 800 }} className="gold-gradient-text">{user.gpa} / 4.00</p>
+          <p style={{ fontSize: '2.1rem', fontWeight: 800 }} className="gold-gradient-text">{stats.gpa} / 4.00</p>
           <p style={{ fontSize: '0.78rem', color: 'var(--accent-emerald)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
             <TrendingUp size={14} /> Top 5% of Faculty Class
           </p>
@@ -63,9 +117,9 @@ export default function DashboardView({ user, courses, quizzes, setActiveView })
               <BookOpen size={20} />
             </div>
           </div>
-          <p style={{ fontSize: '2.1rem', fontWeight: 800 }}>{user.completedCredits} <span style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>/ 136 Cr</span></p>
+          <p style={{ fontSize: '2.1rem', fontWeight: 800 }}>{stats.credits} <span style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>/ 136 Cr</span></p>
           <div style={{ width: '100%', height: 6, background: 'var(--bg-glass)', borderRadius: 99, marginTop: 8, overflow: 'hidden' }}>
-            <div style={{ width: `${(user.completedCredits / 136) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #38bdf8, #6366f1)' }}></div>
+            <div style={{ width: `${(stats.credits / 136) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #38bdf8, #6366f1)' }}></div>
           </div>
         </div>
 
@@ -76,7 +130,7 @@ export default function DashboardView({ user, courses, quizzes, setActiveView })
               <Clock size={20} />
             </div>
           </div>
-          <p style={{ fontSize: '2.1rem', fontWeight: 800, color: 'var(--accent-emerald)' }}>{user.attendancePercentage}%</p>
+          <p style={{ fontSize: '2.1rem', fontWeight: 800, color: 'var(--accent-emerald)' }}>{stats.attendance}%</p>
           <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: 4 }}>QR Check-in Verified</p>
         </div>
 
@@ -87,7 +141,7 @@ export default function DashboardView({ user, courses, quizzes, setActiveView })
               <AlertCircle size={20} />
             </div>
           </div>
-          <p style={{ fontSize: '2.1rem', fontWeight: 800 }}>{quizzes.filter(q => q.status === 'Pending').length} <span style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>Pending</span></p>
+          <p style={{ fontSize: '2.1rem', fontWeight: 800 }}>{stats.pendingQuizzes} <span style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>Pending</span></p>
           <p style={{ fontSize: '0.78rem', color: 'var(--accent-amber)', marginTop: 4 }}>Due in 3 days</p>
         </div>
 
