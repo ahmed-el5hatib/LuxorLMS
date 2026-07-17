@@ -65,9 +65,21 @@ builder.Services.AddSwaggerGen(c =>
 
 // Databases
 builder.Services.AddDbContext<LuxorLMSQuizzesDbContext>(options =>
-    var __conn = builder.Configuration.GetConnectionString("DefaultConnection"); if (__conn != null && __conn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase)) options.UseSqlite(__conn); else options.UseNpgsql(__conn));
+{
+    var __conn = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (!string.IsNullOrEmpty(__conn) && __conn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))
+        options.UseSqlite(__conn);
+    else
+        options.UseNpgsql(__conn);
+});
 builder.Services.AddDbContext<LuxorLMSAcademicDbContext>(options =>
-    var __academicConn = builder.Configuration.GetConnectionString("AcademicConnection") ?? connString; if (__academicConn != null && __academicConn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase)) options.UseSqlite(__academicConn); else options.UseNpgsql(__academicConn));
+{
+    var __academicConn = builder.Configuration.GetConnectionString("AcademicConnection") ?? builder.Configuration.GetConnectionString("DefaultConnection");
+    if (!string.IsNullOrEmpty(__academicConn) && __academicConn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))
+        options.UseSqlite(__academicConn);
+    else
+        options.UseNpgsql(__academicConn);
+});
 
 builder.Services.AddScoped<IAuthorizationService, LuxorLMS.Identity.Application.Services.AuthorizationService>();
 
@@ -165,4 +177,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
 

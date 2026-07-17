@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
     <ProjectReference Include="..\LuxorLMS.Administration.Application\LuxorLMS.Administration.Application.csproj" />
     <ProjectReference Include="..\LuxorLMS.Administration.Domain\LuxorLMS.Administration.Domain.csproj" />
     <ProjectReference Include="..\LuxorLMS.Identity.Infrastructure\LuxorLMS.Identity.Infrastructure.csproj" />
@@ -27,4 +26,5 @@
   </PropertyGroup>
 
 </Project>
+
 

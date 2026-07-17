@@ -62,8 +62,22 @@ builder.Services.AddSwaggerGen(c =>
 
 var connString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Host=localhost;Database=luxorlms_forums;Username=postgres;Password=postgres";
 
-builder.Services.AddDbContext<LuxorLMSForumsDbContext>(options => var __anyConn = connString; if (__anyConn != null && __anyConn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase)) options.UseSqlite(__anyConn); else options.UseNpgsql(__anyConn));
-builder.Services.AddDbContext<LuxorLMSAcademicDbContext>(options => var __academicConn = builder.Configuration.GetConnectionString("AcademicConnection") ?? connString; if (__academicConn != null && __academicConn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase)) options.UseSqlite(__academicConn); else options.UseNpgsql(__academicConn));
+builder.Services.AddDbContext<LuxorLMSForumsDbContext>(options =>
+{
+    var __anyConn = connString;
+    if (!string.IsNullOrEmpty(__anyConn) && __anyConn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))
+        options.UseSqlite(__anyConn);
+    else
+        options.UseNpgsql(__anyConn);
+});
+builder.Services.AddDbContext<LuxorLMSAcademicDbContext>(options =>
+{
+    var __academicConn = builder.Configuration.GetConnectionString("AcademicConnection") ?? connString;
+    if (!string.IsNullOrEmpty(__academicConn) && __academicConn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))
+        options.UseSqlite(__academicConn);
+    else
+        options.UseNpgsql(__academicConn);
+});
 
 builder.Services.AddScoped<IAuthorizationService, LuxorLMS.Identity.Application.Services.AuthorizationService>();
 

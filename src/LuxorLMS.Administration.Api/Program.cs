@@ -59,7 +59,14 @@ builder.Services.AddSwaggerGen(c =>
 
 var connString = builder.Configuration.GetConnectionString("AdministrationConnection") ?? "Host=localhost;Database=luxorlms_administration;Username=postgres;Password=postgres";
 
-builder.Services.AddDbContext<LuxorLMSAdministrationDbContext>(options => var __anyConn = connString; if (__anyConn != null && __anyConn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase)) options.UseSqlite(__anyConn); else options.UseNpgsql(__anyConn));
+builder.Services.AddDbContext<LuxorLMSAdministrationDbContext>(options =>
+{
+    var __anyConn = connString;
+    if (!string.IsNullOrEmpty(__anyConn) && __anyConn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))
+        options.UseSqlite(__anyConn);
+    else
+        options.UseNpgsql(__anyConn);
+});
 
 builder.Services.AddScoped<IAuthorizationService, LuxorLMS.Identity.Application.Services.AuthorizationService>();
 

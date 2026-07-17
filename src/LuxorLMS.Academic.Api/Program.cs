@@ -62,7 +62,13 @@ builder.Services.AddSwaggerGen(c =>
 
 // Database (separate Academic schema/database)
 builder.Services.AddDbContext<LuxorLMSAcademicDbContext>(options =>
-    var __conn = builder.Configuration.GetConnectionString("DefaultConnection"); if (__conn != null && __conn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase)) options.UseSqlite(__conn); else options.UseNpgsql(__conn));
+{
+    var __conn = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (!string.IsNullOrEmpty(__conn) && __conn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))
+        options.UseSqlite(__conn);
+    else
+        options.UseNpgsql(__conn);
+});
 
 // Identity module (for RBAC authorization service)
 builder.Services.AddHttpClient();
@@ -173,4 +179,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
 

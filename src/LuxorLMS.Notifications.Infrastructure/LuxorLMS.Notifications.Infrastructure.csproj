@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
     <ProjectReference Include="..\LuxorLMS.Notifications.Application\LuxorLMS.Notifications.Application.csproj" />
     <ProjectReference Include="..\LuxorLMS.Notifications.Domain\LuxorLMS.Notifications.Domain.csproj" />
     <ProjectReference Include="..\LuxorLMS.Identity.Infrastructure\LuxorLMS.Identity.Infrastructure.csproj" />
@@ -36,4 +35,5 @@
   </PropertyGroup>
 
 </Project>
+
 

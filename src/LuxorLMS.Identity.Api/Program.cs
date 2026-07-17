@@ -52,7 +52,13 @@ builder.Services.AddSwaggerGen(c =>
 
 // Database
 builder.Services.AddDbContext<LuxorLMSIdentityDbContext>(options =>
-    var __conn = builder.Configuration.GetConnectionString("DefaultConnection"); if (__conn != null && __conn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase)) options.UseSqlite(__conn); else options.UseNpgsql(__conn));
+{
+    var __conn = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (!string.IsNullOrEmpty(__conn) && __conn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))
+        options.UseSqlite(__conn);
+    else
+        options.UseNpgsql(__conn);
+});
 
 // Redis
 builder.Services.AddSingleton<IRedisConnectionFactory>(sp =>
