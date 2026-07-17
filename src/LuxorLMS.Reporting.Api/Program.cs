@@ -57,7 +57,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-var connString = builder.Configuration.GetConnectionString("ReportingConnection") ?? "Host=localhost;Database=luxorlms_reporting;Username=postgres;Password=postgres";
+var connString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=local_luxorlms.db";
 
 builder.Services.AddDbContext<LuxorLMSReportingDbContext>(options =>
 {

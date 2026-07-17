@@ -101,9 +101,9 @@ builder.Services.AddScoped<IUserNotificationGateway, UserNotificationGateway>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<SendNotificationJob>();
 
-// Hangfire setup
-builder.Services.AddHangfire(config => config.UsePostgreSqlStorage(c => c.UseNpgsqlConnection(connString)));
-builder.Services.AddHangfireServer();
+// Hangfire setup - disabled for SQLite local development
+// builder.Services.AddHangfire(config => config.UsePostgreSqlStorage(c => c.UseNpgsqlConnection(connString)));
+// builder.Services.AddHangfireServer();
 
 var jwtSection = builder.Configuration.GetSection("Jwt");
 var secretKey = jwtSection["SecretKey"] ?? "ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!";
@@ -153,7 +153,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseHangfireDashboard("/hangfire");
+// app.UseHangfireDashboard("/hangfire");
 app.MapControllers();
 
 app.Run();

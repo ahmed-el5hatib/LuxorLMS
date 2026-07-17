@@ -2,6 +2,7 @@
 using LuxorLMS.Academic.Infrastructure.Persistence;
 using LuxorLMS.Academic.Infrastructure.Repositories;
 using LuxorLMS.Identity.Application.Interfaces;
+using LuxorLMS.Identity.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -71,6 +72,14 @@ builder.Services.AddDbContext<LuxorLMSAcademicDbContext>(options =>
 });
 
 // Identity module (for RBAC authorization service)
+builder.Services.AddDbContext<LuxorLMSIdentityDbContext>(options =>
+{
+    var __idConn = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (!string.IsNullOrEmpty(__idConn) && __idConn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase))
+        options.UseSqlite(__idConn);
+    else
+        options.UseNpgsql(__idConn);
+});
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
 
@@ -102,6 +111,7 @@ builder.Services.AddScoped<IStudentService, LuxorLMS.Academic.Application.Servic
 
 // Identity Authorization (RBAC)
 builder.Services.AddScoped<IAuthorizationService, LuxorLMS.Identity.Application.Services.AuthorizationService>();
+builder.Services.AddScoped<LuxorLMS.Identity.Domain.Interfaces.IUserRepository, LuxorLMS.Identity.Infrastructure.Repositories.UserRepository>();
 
 // FluentValidation
 builder.Services.AddValidatorsFromAssembly(typeof(LuxorLMS.Academic.Application.DTOs.FacultyDto).Assembly);
