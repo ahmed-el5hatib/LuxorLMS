@@ -113,6 +113,19 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
+app.UseDefaultFiles();
+
+app.UseRouting();
+
+app.UseCors(policy =>
+{
+    policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://localhost:8080")
+          .AllowAnyMethod()
+          .AllowAnyHeader()
+          .AllowCredentials();
+});
+
 app.UseAuthorization();
 
 app.MapControllers();

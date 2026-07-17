@@ -1,27 +1,10 @@
+version: '1'
+
 services:
   - type: web
-    name: luxorlms-identity-api
+    name: luxorlms-app
     env: docker
     plan: free
     branch: master
-    dockerfilePath: ./src/LuxorLMS.Identity.Api/Dockerfile
-    envVars:
-      - key: ASPNETCORE_ENVIRONMENT
-        value: Development
-      - key: ConnectionStrings__DefaultConnection
-        value: Host=ep-winter-pine-au54at1x-pooler.c-10.us-east-1.aws.neon.tech; Database=LuxorLMS; Username=neondb_owner; Password=npg_F13aeQRVhJLq; SSL Mode=VerifyFull; Channel Binding=Require;
-      - key: Jwt__SecretKey
-        value: ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
-      - key: Jwt__Issuer
-        value: LuxorLMS
-      - key: Jwt__Audience
-        value: LuxorLMSUsers
+    dockerfilePath: ./Dockerfile
     healthCheckPath: /health
-
-  - type: web
-    name: luxorlms-frontend
-    env: docker
-    plan: free
-    branch: master
-    dockerfilePath: ./src/LuxorLMS.Frontend/Dockerfile
-    healthCheckPath: /
