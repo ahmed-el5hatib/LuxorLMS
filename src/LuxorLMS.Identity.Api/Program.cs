@@ -120,7 +120,7 @@ app.UseRouting();
 
 app.UseCors(policy =>
 {
-    policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://localhost:8080")
+    policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://localhost:8080", "https://luxorlms-1.onrender.com")
           .AllowAnyMethod()
           .AllowAnyHeader()
           .AllowCredentials();
@@ -129,5 +129,8 @@ app.UseCors(policy =>
 app.UseAuthorization();
 
 app.MapControllers();
+
+// SPA fallback - serve index.html for all non-API routes
+app.MapFallbackToFile("index.html", "text/html");
 
 app.Run();

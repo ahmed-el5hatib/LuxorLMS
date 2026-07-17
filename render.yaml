@@ -7,4 +7,5 @@ services:
     plan: free
     branch: master
     dockerfilePath: ./Dockerfile
-    healthCheckPath: /health
+    buildCommand: docker build -t luxorlms-app .
+    startCommand: dotnet LuxorLMS.Identity.Api.dll

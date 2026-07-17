@@ -1,8 +1,13 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
-EXPOSE 8080
+# Stage 1: Build React frontend
+FROM node:20-alpine AS frontend-builder
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
+RUN npm ci --production=false
+COPY frontend/ ./
+RUN npm run build
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# Stage 2: Build .NET API
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS backend-builder
 WORKDIR /src
 COPY ["src/LuxorLMS.Identity.Api/LuxorLMS.Identity.Api.csproj", "src/LuxorLMS.Identity.Api/"]
 COPY ["src/LuxorLMS.Identity.Application/LuxorLMS.Identity.Application.csproj", "src/LuxorLMS.Identity.Application/"]
@@ -14,12 +19,16 @@ COPY . .
 WORKDIR "/src/src/LuxorLMS.Identity.Api"
 RUN dotnet publish "LuxorLMS.Identity.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-FROM nginx:alpine AS frontend
-COPY src/LuxorLMS.Frontend/ /usr/share/nginx/html/
-
-FROM base AS final
+# Stage 3: Final image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-COPY --from=build /app/publish .
-COPY --from=frontend /usr/share/nginx/html/ ./wwwroot/
+EXPOSE 8080
+
+# Copy .NET API
+COPY --from=backend-builder /app/publish .
+
+# Copy built frontend to wwwroot
+COPY --from=frontend-builder /app/frontend/dist ./wwwroot/
+
 ENV ASPNETCORE_URLS=http://+:8080
 ENTRYPOINT ["dotnet", "LuxorLMS.Identity.Api.dll"]
