@@ -1,4 +1,4 @@
-using LuxorLMS.Assignments.Infrastructure.Persistence;
+﻿using LuxorLMS.Assignments.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -20,8 +20,9 @@ public class LuxorLMSAssignmentsDbContextFactory : IDesignTimeDbContextFactory<L
             ?? "Host=localhost;Port=5432;Database=luxorlms_assignments;Username=postgres;Password=postgres";
 
         var optionsBuilder = new DbContextOptionsBuilder<LuxorLMSAssignmentsDbContext>();
-        optionsBuilder.UseNpgsql(connectionString);
+        optionsBuilder.UseSqlite("Data Source=local_luxorlms.db");
 
         return new LuxorLMSAssignmentsDbContext(optionsBuilder.Options);
     }
 }
+

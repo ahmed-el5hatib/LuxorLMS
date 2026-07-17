@@ -1,4 +1,4 @@
-using LuxorLMS.Analytics.Infrastructure.Persistence;
+﻿using LuxorLMS.Analytics.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -9,8 +9,9 @@ public class AnalyticsDbContextFactory : IDesignTimeDbContextFactory<LuxorLMSAna
     public LuxorLMSAnalyticsDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<LuxorLMSAnalyticsDbContext>();
-        optionsBuilder.UseNpgsql("Host=localhost;Database=luxorlms_analytics;Username=postgres;Password=postgres");
+        optionsBuilder.UseSqlite("Data Source=local_luxorlms.db");
 
         return new LuxorLMSAnalyticsDbContext(optionsBuilder.Options);
     }
 }
+

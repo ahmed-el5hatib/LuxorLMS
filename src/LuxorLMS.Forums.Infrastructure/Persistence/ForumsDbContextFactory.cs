@@ -1,4 +1,4 @@
-using LuxorLMS.Forums.Infrastructure.Persistence;
+﻿using LuxorLMS.Forums.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -9,8 +9,9 @@ public class ForumsDbContextFactory : IDesignTimeDbContextFactory<LuxorLMSForums
     public LuxorLMSForumsDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<LuxorLMSForumsDbContext>();
-        optionsBuilder.UseNpgsql("Host=localhost;Database=luxorlms_forums;Username=postgres;Password=postgres");
+        optionsBuilder.UseSqlite("Data Source=local_luxorlms.db");
 
         return new LuxorLMSForumsDbContext(optionsBuilder.Options);
     }
 }
+

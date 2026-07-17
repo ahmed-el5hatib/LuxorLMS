@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -16,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
     <ProjectReference Include="..\LuxorLMS.Academic.Application\LuxorLMS.Academic.Application.csproj" />
     <ProjectReference Include="..\LuxorLMS.Academic.Domain\LuxorLMS.Academic.Domain.csproj" />
     <ProjectReference Include="..\LuxorLMS.Kernel\LuxorLMS.Kernel.csproj" />
@@ -28,3 +30,4 @@
   </PropertyGroup>
 
 </Project>
+

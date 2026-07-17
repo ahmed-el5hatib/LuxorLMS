@@ -1,4 +1,4 @@
-using LuxorLMS.Academic.Application.Interfaces;
+﻿using LuxorLMS.Academic.Application.Interfaces;
 using LuxorLMS.Academic.Application.Services;
 using LuxorLMS.Academic.Infrastructure.Persistence;
 using LuxorLMS.Identity.Application.Interfaces;
@@ -65,9 +65,9 @@ builder.Services.AddSwaggerGen(c =>
 
 // Databases
 builder.Services.AddDbContext<LuxorLMSAttendanceDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    var __conn = builder.Configuration.GetConnectionString("DefaultConnection"); if (__conn != null && __conn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase)) options.UseSqlite(__conn); else options.UseNpgsql(__conn));
 builder.Services.AddDbContext<LuxorLMSAcademicDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("AcademicConnection")));
+    var __academicConn = builder.Configuration.GetConnectionString("AcademicConnection") ?? connString; if (__academicConn != null && __academicConn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase)) options.UseSqlite(__academicConn); else options.UseNpgsql(__academicConn));
 
 builder.Services.AddScoped<IAuthorizationService, LuxorLMS.Identity.Application.Services.AuthorizationService>();
 
@@ -164,3 +164,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

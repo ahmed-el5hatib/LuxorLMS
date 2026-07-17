@@ -1,4 +1,4 @@
-using LuxorLMS.Administration.Infrastructure.Persistence;
+﻿using LuxorLMS.Administration.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -9,8 +9,9 @@ public class AdministrationDbContextFactory : IDesignTimeDbContextFactory<LuxorL
     public LuxorLMSAdministrationDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<LuxorLMSAdministrationDbContext>();
-        optionsBuilder.UseNpgsql("Host=localhost;Database=luxorlms_administration;Username=postgres;Password=postgres");
+        optionsBuilder.UseSqlite("Data Source=local_luxorlms.db");
 
         return new LuxorLMSAdministrationDbContext(optionsBuilder.Options);
     }
 }
+

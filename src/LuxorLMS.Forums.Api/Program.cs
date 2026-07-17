@@ -1,4 +1,4 @@
-using LuxorLMS.Academic.Infrastructure.Persistence;
+﻿using LuxorLMS.Academic.Infrastructure.Persistence;
 using LuxorLMS.Forums.Application.Interfaces;
 using LuxorLMS.Forums.Application.Services;
 using LuxorLMS.Forums.Domain.Interfaces;
@@ -62,8 +62,8 @@ builder.Services.AddSwaggerGen(c =>
 
 var connString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Host=localhost;Database=luxorlms_forums;Username=postgres;Password=postgres";
 
-builder.Services.AddDbContext<LuxorLMSForumsDbContext>(options => options.UseNpgsql(connString));
-builder.Services.AddDbContext<LuxorLMSAcademicDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("AcademicConnection") ?? connString));
+builder.Services.AddDbContext<LuxorLMSForumsDbContext>(options => var __anyConn = connString; if (__anyConn != null && __anyConn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase)) options.UseSqlite(__anyConn); else options.UseNpgsql(__anyConn));
+builder.Services.AddDbContext<LuxorLMSAcademicDbContext>(options => var __academicConn = builder.Configuration.GetConnectionString("AcademicConnection") ?? connString; if (__academicConn != null && __academicConn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase)) options.UseSqlite(__academicConn); else options.UseNpgsql(__academicConn));
 
 builder.Services.AddScoped<IAuthorizationService, LuxorLMS.Identity.Application.Services.AuthorizationService>();
 
@@ -127,3 +127,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

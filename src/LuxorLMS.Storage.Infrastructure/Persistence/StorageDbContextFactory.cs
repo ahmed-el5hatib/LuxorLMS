@@ -1,4 +1,4 @@
-using LuxorLMS.Storage.Infrastructure.Persistence;
+﻿using LuxorLMS.Storage.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -9,8 +9,9 @@ public class StorageDbContextFactory : IDesignTimeDbContextFactory<LuxorLMSStora
     public LuxorLMSStorageDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<LuxorLMSStorageDbContext>();
-        optionsBuilder.UseNpgsql("Host=localhost;Database=luxorlms_storage;Username=postgres;Password=postgres");
+        optionsBuilder.UseSqlite("Data Source=local_luxorlms.db");
 
         return new LuxorLMSStorageDbContext(optionsBuilder.Options);
     }
 }
+

@@ -1,4 +1,4 @@
-using LuxorLMS.Attendance.Infrastructure.Persistence;
+﻿using LuxorLMS.Attendance.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -20,8 +20,9 @@ public class LuxorLMSAttendanceDbContextFactory : IDesignTimeDbContextFactory<Lu
             ?? "Host=localhost;Port=5432;Database=luxorlms_attendance;Username=postgres;Password=postgres";
 
         var optionsBuilder = new DbContextOptionsBuilder<LuxorLMSAttendanceDbContext>();
-        optionsBuilder.UseNpgsql(connectionString);
+        optionsBuilder.UseSqlite("Data Source=local_luxorlms.db");
 
         return new LuxorLMSAttendanceDbContext(optionsBuilder.Options);
     }
 }
+

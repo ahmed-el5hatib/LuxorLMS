@@ -1,4 +1,4 @@
-using LuxorLMS.Reporting.Infrastructure.Persistence;
+﻿using LuxorLMS.Reporting.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -9,8 +9,9 @@ public class ReportingDbContextFactory : IDesignTimeDbContextFactory<LuxorLMSRep
     public LuxorLMSReportingDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<LuxorLMSReportingDbContext>();
-        optionsBuilder.UseNpgsql("Host=localhost;Database=luxorlms_reporting;Username=postgres;Password=postgres");
+        optionsBuilder.UseSqlite("Data Source=local_luxorlms.db");
 
         return new LuxorLMSReportingDbContext(optionsBuilder.Options);
     }
 }
+

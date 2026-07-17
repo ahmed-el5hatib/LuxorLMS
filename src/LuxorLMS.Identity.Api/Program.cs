@@ -1,4 +1,4 @@
-using LuxorLMS.Identity.Domain.Interfaces;
+﻿using LuxorLMS.Identity.Domain.Interfaces;
 using LuxorLMS.Identity.Infrastructure.Persistence;
 using LuxorLMS.Identity.Infrastructure.Repositories;
 using LuxorLMS.Identity.Infrastructure.Services;
@@ -52,7 +52,7 @@ builder.Services.AddSwaggerGen(c =>
 
 // Database
 builder.Services.AddDbContext<LuxorLMSIdentityDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    var __conn = builder.Configuration.GetConnectionString("DefaultConnection"); if (__conn != null && __conn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase)) options.UseSqlite(__conn); else options.UseNpgsql(__conn));
 
 // Redis
 builder.Services.AddSingleton<IRedisConnectionFactory>(sp =>
@@ -91,6 +91,8 @@ app.UseCors(policy =>
           .AllowCredentials();
 });
 
+// TEMPORARY: Skip database setup for demo
+/*
 // Ensure database is migrated and seeded
 using (var scope = app.Services.CreateScope())
 {
@@ -100,6 +102,7 @@ using (var scope = app.Services.CreateScope())
     var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
     await seeder.SeedAsync();
 }
+*/
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -134,3 +137,4 @@ app.MapControllers();
 app.MapFallbackToFile("index.html", "text/html");
 
 app.Run();
+

@@ -1,4 +1,4 @@
-using LuxorLMS.Identity.Application.Interfaces;
+﻿using LuxorLMS.Identity.Application.Interfaces;
 using LuxorLMS.Reporting.Application.Interfaces;
 using LuxorLMS.Reporting.Application.Services;
 using LuxorLMS.Reporting.Domain.Interfaces;
@@ -59,7 +59,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var connString = builder.Configuration.GetConnectionString("ReportingConnection") ?? "Host=localhost;Database=luxorlms_reporting;Username=postgres;Password=postgres";
 
-builder.Services.AddDbContext<LuxorLMSReportingDbContext>(options => options.UseNpgsql(connString));
+builder.Services.AddDbContext<LuxorLMSReportingDbContext>(options => var __anyConn = connString; if (__anyConn != null && __anyConn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase)) options.UseSqlite(__anyConn); else options.UseNpgsql(__anyConn));
 
 builder.Services.AddScoped<IAuthorizationService, LuxorLMS.Identity.Application.Services.AuthorizationService>();
 
@@ -119,3 +119,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

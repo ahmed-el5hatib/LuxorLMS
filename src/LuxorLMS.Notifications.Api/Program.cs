@@ -1,4 +1,4 @@
-using Hangfire;
+﻿using Hangfire;
 using Hangfire.PostgreSql;
 using LuxorLMS.Academic.Infrastructure.Persistence;
 using LuxorLMS.Identity.Application.Interfaces;
@@ -67,9 +67,9 @@ builder.Services.AddSwaggerGen(c =>
 
 var connString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Host=localhost;Database=luxorlms_notifications;Username=postgres;Password=postgres";
 
-builder.Services.AddDbContext<LuxorLMSNotificationsDbContext>(options => options.UseNpgsql(connString));
+builder.Services.AddDbContext<LuxorLMSNotificationsDbContext>(options => var __anyConn = connString; if (__anyConn != null && __anyConn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase)) options.UseSqlite(__anyConn); else options.UseNpgsql(__anyConn));
 builder.Services.AddDbContext<LuxorLMSIdentityDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection") ?? connString));
-builder.Services.AddDbContext<LuxorLMSAcademicDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("AcademicConnection") ?? connString));
+builder.Services.AddDbContext<LuxorLMSAcademicDbContext>(options => var __academicConn = builder.Configuration.GetConnectionString("AcademicConnection") ?? connString; if (__academicConn != null && __academicConn.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase)) options.UseSqlite(__academicConn); else options.UseNpgsql(__academicConn));
 
 builder.Services.AddScoped<IAuthorizationService, LuxorLMS.Identity.Application.Services.AuthorizationService>();
 
@@ -143,3 +143,4 @@ app.UseHangfireDashboard("/hangfire");
 app.MapControllers();
 
 app.Run();
+

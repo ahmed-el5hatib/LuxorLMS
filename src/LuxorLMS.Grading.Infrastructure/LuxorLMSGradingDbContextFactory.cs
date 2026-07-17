@@ -1,4 +1,4 @@
-using LuxorLMS.Grading.Infrastructure.Persistence;
+﻿using LuxorLMS.Grading.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -20,8 +20,9 @@ public class LuxorLMSGradingDbContextFactory : IDesignTimeDbContextFactory<Luxor
             ?? "Host=localhost;Port=5432;Database=luxorlms_grading;Username=postgres;Password=postgres";
 
         var optionsBuilder = new DbContextOptionsBuilder<LuxorLMSGradingDbContext>();
-        optionsBuilder.UseNpgsql(connectionString);
+        optionsBuilder.UseSqlite("Data Source=local_luxorlms.db");
 
         return new LuxorLMSGradingDbContext(optionsBuilder.Options);
     }
 }
+

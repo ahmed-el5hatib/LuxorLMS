@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
@@ -11,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
     <ProjectReference Include="..\LuxorLMS.Identity.Domain\LuxorLMS.Identity.Domain.csproj" />
     <ProjectReference Include="..\LuxorLMS.Kernel\LuxorLMS.Kernel.csproj" />
   </ItemGroup>
@@ -22,3 +24,4 @@
   </PropertyGroup>
 
 </Project>
+

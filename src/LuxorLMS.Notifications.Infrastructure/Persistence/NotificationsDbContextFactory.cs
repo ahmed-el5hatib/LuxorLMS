@@ -1,4 +1,4 @@
-using LuxorLMS.Notifications.Infrastructure.Persistence;
+﻿using LuxorLMS.Notifications.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -9,8 +9,9 @@ public class NotificationsDbContextFactory : IDesignTimeDbContextFactory<LuxorLM
     public LuxorLMSNotificationsDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<LuxorLMSNotificationsDbContext>();
-        optionsBuilder.UseNpgsql("Host=localhost;Database=luxorlms_notifications;Username=postgres;Password=postgres");
+        optionsBuilder.UseSqlite("Data Source=local_luxorlms.db");
 
         return new LuxorLMSNotificationsDbContext(optionsBuilder.Options);
     }
 }
+
