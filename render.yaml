@@ -1,0 +1,236 @@
+services:
+  - type: web
+    name: luxorlms-identity-api
+    env: docker
+    plan: free
+    branch: master
+    dockerfilePath: ./src/LuxorLMS.Identity.Api/Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Development
+      - key: ConnectionStrings__DefaultConnection
+        value: Host=ep-winter-pine-au54at1x-pooler.c-10.us-east-1.aws.neon.tech; Database=LuxorLMS; Username=neondb_owner; Password=npg_F13aeQRVhJLq; SSL Mode=VerifyFull; Channel Binding=Require;
+      - key: Jwt__SecretKey
+        value: ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - key: Jwt__Issuer
+        value: LuxorLMS
+      - key: Jwt__Audience
+        value: LuxorLMSUsers
+    healthCheckPath: /health
+
+  - type: web
+    name: luxorlms-academic-api
+    env: docker
+    plan: free
+    branch: master
+    dockerfilePath: ./src/LuxorLMS.Academic.Api/Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Development
+      - key: ConnectionStrings__DefaultConnection
+        value: Host=ep-winter-pine-au54at1x-pooler.c-10.us-east-1.aws.neon.tech; Database=LuxorLMS; Username=neondb_owner; Password=npg_F13aeQRVhJLq; SSL Mode=VerifyFull; Channel Binding=Require;
+      - key: Jwt__SecretKey
+        value: ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - key: Jwt__Issuer
+        value: LuxorLMS
+      - key: Jwt__Audience
+        value: LuxorLMSUsers
+    healthCheckPath: /health
+
+  - type: web
+    name: luxorlms-registration-api
+    env: docker
+    plan: free
+    branch: master
+    dockerfilePath: ./src/LuxorLMS.Registration.Api/Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Development
+      - key: ConnectionStrings__DefaultConnection
+        value: Host=ep-winter-pine-au54at1x-pooler.c-10.us-east-1.aws.neon.tech; Database=LuxorLMS; Username=neondb_owner; Password=npg_F13aeQRVhJLq; SSL Mode=VerifyFull; Channel Binding=Require;
+      - key: Jwt__SecretKey
+        value: ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - key: Jwt__Issuer
+        value: LuxorLMS
+      - key: Jwt__Audience
+        value: LuxorLMSUsers
+    healthCheckPath: /health
+
+  - type: web
+    name: luxorlms-forums-api
+    env: docker
+    plan: free
+    branch: master
+    dockerfilePath: ./src/LuxorLMS.Forums.Api/Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Development
+      - key: ConnectionStrings__DefaultConnection
+        value: Host=ep-winter-pine-au54at1x-pooler.c-10.us-east-1.aws.neon.tech; Database=LuxorLMS; Username=neondb_owner; Password=npg_F13aeQRVhJLq; SSL Mode=VerifyFull; Channel Binding=Require;
+      - key: Jwt__SecretKey
+        value: ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - key: Jwt__Issuer
+        value: LuxorLMS
+      - key: Jwt__Audience
+        value: LuxorLMSUsers
+    healthCheckPath: /health
+
+  - type: web
+    name: luxorlms-notifications-api
+    env: docker
+    plan: free
+    branch: master
+    dockerfilePath: ./src/LuxorLMS.Notifications.Api/Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Development
+      - key: ConnectionStrings__DefaultConnection
+        value: Host=ep-winter-pine-au54at1x-pooler.c-10.us-east-1.aws.neon.tech; Database=LuxorLMS; Username=neondb_owner; Password=npg_F13aeQRVhJLq; SSL Mode=VerifyFull; Channel Binding=Require;
+      - key: Jwt__SecretKey
+        value: ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - key: Jwt__Issuer
+        value: LuxorLMS
+      - key: Jwt__Audience
+        value: LuxorLMSUsers
+    healthCheckPath: /health
+
+  - type: web
+    name: luxorlms-storage-api
+    env: docker
+    plan: free
+    branch: master
+    dockerfilePath: ./src/LuxorLMS.Storage.Api/Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Development
+      - key: ConnectionStrings__DefaultConnection
+        value: Host=ep-winter-pine-au54at1x-pooler.c-10.us-east-1.aws.neon.tech; Database=LuxorLMS; Username=neondb_owner; Password=npg_F13aeQRVhJLq; SSL Mode=VerifyFull; Channel Binding=Require;
+      - key: Jwt__SecretKey
+        value: ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - key: Jwt__Issuer
+        value: LuxorLMS
+      - key: Jwt__Audience
+        value: LuxorLMSUsers
+    healthCheckPath: /health
+
+  - type: web
+    name: luxorlms-attendance-api
+    env: docker
+    plan: free
+    branch: master
+    dockerfilePath: ./src/LuxorLMS.Attendance.Api/Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Development
+      - key: ConnectionStrings__DefaultConnection
+        value: Host=ep-winter-pine-au54at1x-pooler.c-10.us-east-1.aws.neon.tech; Database=LuxorLMS; Username=neondb_owner; Password=npg_F13aeQRVhJLq; SSL Mode=VerifyFull; Channel Binding=Require;
+      - key: Jwt__SecretKey
+        value: ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - key: Jwt__Issuer
+        value: LuxorLMS
+      - key: Jwt__Audience
+        value: LuxorLMSUsers
+    healthCheckPath: /health
+
+  - type: web
+    name: luxorlms-grading-api
+    env: docker
+    plan: free
+    branch: master
+    dockerfilePath: ./src/LuxorLMS.Grading.Api/Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Development
+      - key: ConnectionStrings__DefaultConnection
+        value: Host=ep-winter-pine-au54at1x-pooler.c-10.us-east-1.aws.neon.tech; Database=LuxorLMS; Username=neondb_owner; Password=npg_F13aeQRVhJLq; SSL Mode=VerifyFull; Channel Binding=Require;
+      - key: Jwt__SecretKey
+        value: ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - key: Jwt__Issuer
+        value: LuxorLMS
+      - key: Jwt__Audience
+        value: LuxorLMSUsers
+    healthCheckPath: /health
+
+  - type: web
+    name: luxorlms-quizzes-api
+    env: docker
+    plan: free
+    branch: master
+    dockerfilePath: ./src/LuxorLMS.Quizzes.Api/Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Development
+      - key: ConnectionStrings__DefaultConnection
+        value: Host=ep-winter-pine-au54at1x-pooler.c-10.us-east-1.aws.neon.tech; Database=LuxorLMS; Username=neondb_owner; Password=npg_F13aeQRVhJLq; SSL Mode=VerifyFull; Channel Binding=Require;
+      - key: Jwt__SecretKey
+        value: ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - key: Jwt__Issuer
+        value: LuxorLMS
+      - key: Jwt__Audience
+        value: LuxorLMSUsers
+    healthCheckPath: /health
+
+  - type: web
+    name: luxorlms-analytics-api
+    env: docker
+    plan: free
+    branch: master
+    dockerfilePath: ./src/LuxorLMS.Analytics.Api/Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Development
+      - key: ConnectionStrings__DefaultConnection
+        value: Host=ep-winter-pine-au54at1x-pooler.c-10.us-east-1.aws.neon.tech; Database=LuxorLMS; Username=neondb_owner; Password=npg_F13aeQRVhJLq; SSL Mode=VerifyFull; Channel Binding=Require;
+      - key: Jwt__SecretKey
+        value: ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - key: Jwt__Issuer
+        value: LuxorLMS
+      - key: Jwt__Audience
+        value: LuxorLMSUsers
+    healthCheckPath: /health
+
+  - type: web
+    name: luxorlms-reporting-api
+    env: docker
+    plan: free
+    branch: master
+    dockerfilePath: ./src/LuxorLMS.Reporting.Api/Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Development
+      - key: ConnectionStrings__DefaultConnection
+        value: Host=ep-winter-pine-au54at1x-pooler.c-10.us-east-1.aws.neon.tech; Database=LuxorLMS; Username=neondb_owner; Password=npg_F13aeQRVhJLq; SSL Mode=VerifyFull; Channel Binding=Require;
+      - key: Jwt__SecretKey
+        value: ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - key: Jwt__Issuer
+        value: LuxorLMS
+      - key: Jwt__Audience
+        value: LuxorLMSUsers
+    healthCheckPath: /health
+
+  - type: web
+    name: luxorlms-administration-api
+    env: docker
+    plan: free
+    branch: master
+    dockerfilePath: ./src/LuxorLMS.Administration.Api/Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Development
+      - key: ConnectionStrings__DefaultConnection
+        value: Host=ep-winter-pine-au54at1x-pooler.c-10.us-east-1.aws.neon.tech; Database=LuxorLMS; Username=neondb_owner; Password=npg_F13aeQRVhJLq; SSL Mode=VerifyFull; Channel Binding=Require;
+      - key: Jwt__SecretKey
+        value: ChangeThisToAStrongRandomSecretKeyAtLeast32CharactersLong!
+      - key: Jwt__Issuer
+        value: LuxorLMS
+      - key: Jwt__Audience
+        value: LuxorLMSUsers
+    healthCheckPath: /health
+
+  - type: web
+    name: luxorlms-frontend
+    env: docker
+    plan: free
+    branch: master
+    dockerfilePath: ./src/LuxorLMS.Frontend/Dockerfile
+    healthCheckPath: /
